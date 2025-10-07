@@ -3,12 +3,7 @@
 import { Badge } from "@/app/_components/ui/badge";
 import { Product } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
-import {
-  CircleArrowUp,
-  CircleCheckIcon,
-  CircleChevronUpIcon,
-  CircleIcon,
-} from "lucide-react";
+import { CircleIcon } from "lucide-react";
 
 const getStatusLabel = (status: string) => {
   if (status === "IN_STOCK") {
