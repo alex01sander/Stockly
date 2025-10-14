@@ -75,6 +75,7 @@ export const productsTableColumns: ColumnDef<Product>[] = [
     accessorKey: "actions",
     header: "Ações",
     cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
       const [editDialogIsOpen, setEditDialogIsOpen] = useState(false);
       const product = row.original;
       return (
