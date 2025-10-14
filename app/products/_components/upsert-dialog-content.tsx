@@ -1,6 +1,7 @@
 "use client";
-import { createProduct } from "@/app/_actions/product/create-product";
-import { createProductSchema } from "@/app/_actions/product/create-product/schema";
+
+import { upsertProduct } from "@/app/_actions/product/upsert-product";
+import { UpsertProductSchema } from "@/app/_actions/product/upsert-product/schema";
 import { Button } from "@/app/_components/ui/button";
 import {
   DialogHeader,
@@ -27,25 +28,29 @@ import { toast } from "sonner";
 import z from "zod";
 
 interface UpsertProductDialogContentProps {
+  defaultValues?: z.infer<typeof UpsertProductSchema>;
   onSuccess?: () => void;
 }
 
 export const UpsertProductDialogContent = ({
+  defaultValues,
   onSuccess,
 }: UpsertProductDialogContentProps) => {
-  const form = useForm<z.infer<typeof createProductSchema>>({
+  const form = useForm<z.infer<typeof UpsertProductSchema>>({
     shouldUnregister: true,
-    resolver: zodResolver(createProductSchema),
-    defaultValues: {
+    resolver: zodResolver(UpsertProductSchema),
+    defaultValues: defaultValues ?? {
       name: "",
       price: 0,
       stock: 1,
     },
   });
 
-  const onSubmit = async (data: z.infer<typeof createProductSchema>) => {
+  const isEditing = !!defaultValues;
+
+  const onSubmit = async (data: z.infer<typeof UpsertProductSchema>) => {
     try {
-      await createProduct(data);
+      await upsertProduct({ ...data, id: defaultValues?.id });
       onSuccess?.();
       form.reset();
     } catch (error) {
@@ -58,7 +63,7 @@ export const UpsertProductDialogContent = ({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <DialogHeader>
-            <DialogTitle>Criar produto</DialogTitle>
+            <DialogTitle>{isEditing ? "Editar" : "Criar"} produto</DialogTitle>
             <DialogDescription>
               Insira as informações do produto
             </DialogDescription>
