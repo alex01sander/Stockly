@@ -84,20 +84,33 @@ const UpsertSheetComponent = ({
       return;
     }
 
-    setSelectedProducts((prev) => {
-      const existingIndex = prev.findIndex((p) => p.id === selectedProduct.id);
+    setSelectedProducts((currentProducts) => {
+      const existingProduct = currentProducts.find(
+        (product) => product.id === selectedProduct.id,
+      );
 
-      if (existingIndex !== -1) {
-        const updated = [...prev];
-        updated[existingIndex] = {
-          ...updated[existingIndex],
-          quantity: updated[existingIndex].quantity + data.quantity,
-        };
-        return updated;
+      const totalRequestedQuantity = existingProduct
+        ? existingProduct.quantity + data.quantity
+        : data.quantity;
+
+      if (totalRequestedQuantity > selectedProduct.stock) {
+        form.setError("quantity", {
+          message: `Estoque insuficiente. Restam apenas ${selectedProduct.stock} unidades.`,
+        });
+        toast.error("Estoque insuficiente");
+        return currentProducts;
+      }
+
+      if (existingProduct) {
+        return currentProducts.map((product) =>
+          product.id === selectedProduct.id
+            ? { ...product, quantity: totalRequestedQuantity }
+            : product,
+        );
       }
 
       return [
-        ...prev,
+        ...currentProducts,
         {
           id: selectedProduct.id,
           name: selectedProduct.name,
@@ -114,7 +127,6 @@ const UpsertSheetComponent = ({
       quantity: 1,
     });
   };
-
   const total = selectedProducts.reduce(
     (sum, product) => sum + product.price * product.quantity,
     0,
