@@ -29,11 +29,12 @@ import {
 } from "@/app/_components/ui/table";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Product } from "@prisma/client";
-import { PlusIcon, Trash2 } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
+import { SalesTableDropdownMenu } from "./table-dropdown-menu";
 
 const formSchema = z.object({
   productId: z.string().uuid({ message: "O produto é obrigatório" }),
@@ -114,14 +115,16 @@ const UpsertSheetComponent = ({
     });
   };
 
-  const removeProduct = (id: string) => {
-    setSelectedProducts((prev) => prev.filter((p) => p.id !== id));
-  };
-
   const total = selectedProducts.reduce(
     (sum, product) => sum + product.price * product.quantity,
     0,
   );
+
+  const onDelete = (productId: string) => {
+    setSelectedProducts((currentProducts) =>
+      currentProducts.filter((product) => product.id !== productId),
+    );
+  };
 
   return (
     <SheetContent className="!max-w-[700px]">
@@ -210,13 +213,10 @@ const UpsertSheetComponent = ({
                       .replace(".", ",")}
                   </TableCell>
                   <TableCell className="text-center">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeProduct(product.id)}
-                    >
-                      <Trash2 size={18} className="text-red-500" />
-                    </Button>
+                    <SalesTableDropdownMenu
+                      product={product}
+                      onDelete={onDelete}
+                    />
                   </TableCell>
                 </TableRow>
               ))}
