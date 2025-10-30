@@ -36,7 +36,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { SalesTableDropdownMenu } from "./table-dropdown-menu";
-import { createSale } from "@/app/_actions/sale/create-sale";
+import { createSaleAction } from "@/app/_actions/sale/create-sale";
+import { useAction } from "next-safe-action/hooks";
 
 const formSchema = z.object({
   productId: z.string().uuid({ message: "O produto é obrigatório" }),
@@ -64,11 +65,23 @@ interface SelectedProduct {
 const UpsertSheetComponent = ({
   productOptions,
   products,
-  onSubmitSuccess,
 }: UpsertSheetComponentProps) => {
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
     [],
   );
+
+  const { execute: executeCreateSale } = useAction(createSaleAction, {
+    onError: (error) => {
+      console.error(error);
+      toast.error("Erro ao criar venda");
+    },
+    onSuccess: () => {
+      toast.success("Venda criada com sucesso");
+
+      setSelectedProducts([]);
+      form.reset();
+    },
+  });
 
   const form = useForm<FormSchema>({
     resolver: zodResolver(formSchema),
@@ -143,21 +156,12 @@ const UpsertSheetComponent = ({
   };
 
   const onSubmitSale = async () => {
-    try {
-      await createSale({
-        products: selectedProducts.map((product) => ({
-          id: product.id,
-          quantity: product.quantity,
-        })),
-      });
-      toast.success("Venda criada com sucesso");
-      onSubmitSuccess?.();
-      setSelectedProducts([]);
-      form.reset();
-    } catch (error) {
-      console.error(error);
-      toast.error("Erro ao criar venda");
-    }
+    executeCreateSale({
+      products: selectedProducts.map((product) => ({
+        id: product.id,
+        quantity: product.quantity,
+      })),
+    });
   };
 
   return (
