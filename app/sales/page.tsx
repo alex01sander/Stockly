@@ -1,6 +1,9 @@
 import React from "react";
 import { getProducts } from "../_data-acess/product/get-produts";
 import CreateSaleButton from "./_components/create-sale-button";
+import { DataTable } from "../_components/ui/data-table";
+import { salesTableColumns } from "./_components/table-columns";
+import { getSales } from "../_data-acess/sales/get-sales";
 
 const Sales = async () => {
   const products = await getProducts();
@@ -8,6 +11,8 @@ const Sales = async () => {
     value: product.id,
     label: product.name,
   }));
+
+  const sales = await getSales();
 
   return (
     <div className="mx-8 my-8 w-full space-y-8 rounded-lg bg-white p-8 px-8 py-8">
@@ -21,6 +26,7 @@ const Sales = async () => {
         </div>
         <CreateSaleButton products={products} productOptions={productOptions} />
       </div>
+      <DataTable columns={salesTableColumns} data={sales} />
     </div>
   );
 };
