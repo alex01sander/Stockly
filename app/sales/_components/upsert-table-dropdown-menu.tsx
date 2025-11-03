@@ -11,15 +11,15 @@ import { Product } from "@prisma/client";
 import { ClipboardIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import React from "react";
 
-interface SalesTableDropdownMenuProps {
+interface UpsertSaleTableDropdownMenuProps {
   product: Pick<Product, "id">;
   onDelete: (productId: string) => void;
 }
 
-export const SalesTableDropdownMenu = ({
+export const UpsertSaleTableDropdownMenu = ({
   product,
   onDelete,
-}: SalesTableDropdownMenuProps) => {
+}: UpsertSaleTableDropdownMenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

@@ -35,7 +35,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
-import { SalesTableDropdownMenu } from "./table-dropdown-menu";
+import { UpsertSaleTableDropdownMenu } from "./upsert-table-dropdown-menu";
 import { createSaleAction } from "@/app/_actions/sale/create-sale";
 import { useAction } from "next-safe-action/hooks";
 
@@ -251,7 +251,7 @@ const UpsertSheetComponent = ({
                       .replace(".", ",")}
                   </TableCell>
                   <TableCell className="text-center">
-                    <SalesTableDropdownMenu
+                    <UpsertSaleTableDropdownMenu
                       product={product}
                       onDelete={onDelete}
                     />
