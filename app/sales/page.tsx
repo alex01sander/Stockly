@@ -2,7 +2,7 @@ import React from "react";
 import { getProducts } from "../_data-acess/product/get-produts";
 import CreateSaleButton from "./_components/create-sale-button";
 import { DataTable } from "../_components/ui/data-table";
-import { salesTableColumns } from "./_components/table-columns";
+import { SalesTableColumns } from "./_components/table-columns";
 import { getSales } from "../_data-acess/sales/get-sales";
 
 const Sales = async () => {
@@ -26,7 +26,7 @@ const Sales = async () => {
         </div>
         <CreateSaleButton products={products} productOptions={productOptions} />
       </div>
-      <DataTable columns={salesTableColumns} data={sales} />
+      <DataTable columns={SalesTableColumns} data={sales} />
     </div>
   );
 };
