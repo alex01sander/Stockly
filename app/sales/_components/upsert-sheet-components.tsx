@@ -53,6 +53,7 @@ interface UpsertSheetComponentProps {
   products: Product[];
   productOptions: ComboboxOption[];
   onSubmitSuccess?: () => void;
+  defaultSelectedProducts?: SelectedProduct[];
 }
 
 interface SelectedProduct {
@@ -65,9 +66,10 @@ interface SelectedProduct {
 const UpsertSheetComponent = ({
   productOptions,
   products,
+  defaultSelectedProducts = [],
 }: UpsertSheetComponentProps) => {
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
-    [],
+    defaultSelectedProducts,
   );
 
   const { execute: executeCreateSale } = useAction(createSaleAction, {
