@@ -29,7 +29,6 @@ import {
   TableRow,
 } from "@/app/_components/ui/table";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Product } from "@prisma/client";
 import { CheckIcon, PlusIcon } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -38,6 +37,7 @@ import z from "zod";
 import { UpsertSaleTableDropdownMenu } from "./upsert-table-dropdown-menu";
 import { createSaleAction } from "@/app/_actions/sale/create-sale";
 import { useAction } from "next-safe-action/hooks";
+import { ProductDto } from "@/app/_data-acess/product/get-produts";
 
 const formSchema = z.object({
   productId: z.string().uuid({ message: "O produto é obrigatório" }),
@@ -50,10 +50,11 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 interface UpsertSheetComponentProps {
-  products: Product[];
+  products: ProductDto[];
   productOptions: ComboboxOption[];
   onSubmitSuccess?: () => void;
   defaultSelectedProducts?: SelectedProduct[];
+  setUpsertSheetIsOpen?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 interface SelectedProduct {
@@ -67,6 +68,7 @@ const UpsertSheetComponent = ({
   productOptions,
   products,
   defaultSelectedProducts = [],
+  setUpsertSheetIsOpen,
 }: UpsertSheetComponentProps) => {
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
     defaultSelectedProducts,
@@ -79,7 +81,7 @@ const UpsertSheetComponent = ({
     },
     onSuccess: () => {
       toast.success("Venda criada com sucesso");
-
+      setUpsertSheetIsOpen?.(false);
       setSelectedProducts([]);
       form.reset();
     },

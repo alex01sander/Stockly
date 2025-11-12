@@ -20,7 +20,6 @@ import {
   DropdownMenuTrigger,
 } from "@/app/_components/ui/dropdown-menu";
 import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
-import { Sale } from "@prisma/client";
 import {
   ClipboardIcon,
   EditIcon,
@@ -28,15 +27,26 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useAction } from "next-safe-action/hooks";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "sonner";
 import UpsertSheetComponent from "./upsert-sheet-components";
+import { SaleDto } from "@/app/_data-acess/sales/get-sales";
+import { ComboboxOption } from "@/app/_components/ui/combobox";
+import { ProductDto } from "@/app/_data-acess/product/get-produts";
 
 interface SalesTableDropdownMenuProps {
-  sale: Pick<Sale, "id">;
+  sale: Pick<SaleDto, "id" | "saleProducts">;
+  productOptions: ComboboxOption[];
+  products: ProductDto[];
 }
 
-const SalesTableDropdownMenu = ({ sale }: SalesTableDropdownMenuProps) => {
+const SalesTableDropdownMenu = ({
+  sale,
+  productOptions,
+  products,
+}: SalesTableDropdownMenuProps) => {
+  const [upsertSheetIsOpen, setUpsertSheetIsOpen] = useState(false);
+
   const { execute } = useAction(deleteSale, {
     onSuccess: () => {
       toast.success("Venda deletada com sucesso");
@@ -54,7 +64,7 @@ const SalesTableDropdownMenu = ({ sale }: SalesTableDropdownMenuProps) => {
   const handleConfirmDelete = () => execute({ id: sale.id });
 
   return (
-    <Sheet>
+    <Sheet open={upsertSheetIsOpen} onOpenChange={setUpsertSheetIsOpen}>
       <AlertDialog>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -104,7 +114,17 @@ const SalesTableDropdownMenu = ({ sale }: SalesTableDropdownMenuProps) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      <UpsertSheetComponent products={[]} productOptions={[]} />
+      <UpsertSheetComponent
+        productOptions={productOptions}
+        products={products}
+        setUpsertSheetIsOpen={setUpsertSheetIsOpen}
+        defaultSelectedProducts={sale.saleProducts.map((saleProduct) => ({
+          id: saleProduct.productId,
+          name: "teste",
+          price: Number(saleProduct.product.price),
+          quantity: saleProduct.quantity,
+        }))}
+      />
     </Sheet>
   );
 };
