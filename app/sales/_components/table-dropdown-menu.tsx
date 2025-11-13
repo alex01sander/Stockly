@@ -115,12 +115,13 @@ const SalesTableDropdownMenu = ({
         </AlertDialogContent>
       </AlertDialog>
       <UpsertSheetComponent
+        saleId={sale.id}
         productOptions={productOptions}
         products={products}
         setUpsertSheetIsOpen={setUpsertSheetIsOpen}
         defaultSelectedProducts={sale.saleProducts.map((saleProduct) => ({
           id: saleProduct.productId,
-          name: "teste",
+          name: saleProduct.product.name,
           price: Number(saleProduct.product.price),
           quantity: saleProduct.quantity,
         }))}

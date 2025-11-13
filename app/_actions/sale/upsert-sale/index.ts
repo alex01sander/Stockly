@@ -9,6 +9,7 @@ export const upsertSaleAction = actionClient
   .schema(upsertSaleSchema)
   .action(async ({ parsedInput: { products, id } }) => {
     const isUpdate = Boolean(id);
+    let originalDate: Date | null = null;
 
     await db.$transaction(async (trx) => {
       if (isUpdate) {
@@ -20,6 +21,8 @@ export const upsertSaleAction = actionClient
         });
 
         if (existingSale) {
+          originalDate = existingSale.date;
+
           for (const saleProduct of existingSale.saleProducts) {
             await trx.product.update({
               where: { id: saleProduct.productId },
@@ -39,12 +42,12 @@ export const upsertSaleAction = actionClient
 
       const sale = await trx.sale.create({
         data: {
-          date: new Date(),
+          date: originalDate || new Date(),
         },
       });
 
       for (const product of products) {
-        const productFromDb = await db.product.findUnique({
+        const productFromDb = await trx.product.findUnique({
           where: { id: product.id },
         });
 
@@ -82,4 +85,5 @@ export const upsertSaleAction = actionClient
     });
 
     revalidatePath("/products");
+    revalidatePath("/sales");
   });

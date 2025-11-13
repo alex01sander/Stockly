@@ -76,13 +76,17 @@ const UpsertSheetComponent = ({
     defaultSelectedProducts,
   );
 
+  const isEditing = Boolean(saleId);
+
   const { execute: executeupsertSale } = useAction(upsertSaleAction, {
     onError: (error) => {
       console.error(error);
-      toast.error("Erro ao criar venda");
+      toast.error(isEditing ? "Erro ao editar venda" : "Erro ao criar venda");
     },
     onSuccess: () => {
-      toast.success("Venda criada com sucesso");
+      toast.success(
+        isEditing ? "Venda editada com sucesso" : "Venda criada com sucesso",
+      );
       setUpsertSheetIsOpen?.(false);
       setSelectedProducts([]);
       form.reset();
@@ -174,9 +178,11 @@ const UpsertSheetComponent = ({
   return (
     <SheetContent className="!max-w-[700px]">
       <SheetHeader>
-        <SheetTitle>Nova venda</SheetTitle>
+        <SheetTitle>{isEditing ? "Editar venda" : "Nova venda"}</SheetTitle>
         <SheetDescription>
-          Insira as informações da venda abaixo.
+          {isEditing
+            ? "Edite as informações da venda abaixo."
+            : "Insira as informações da venda abaixo."}
         </SheetDescription>
       </SheetHeader>
 
