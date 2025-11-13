@@ -1,10 +1,10 @@
 import React from "react";
 import { getProducts } from "../_data-acess/product/get-produts";
-import CreateSaleButton from "./_components/create-sale-button";
 import { DataTable } from "../_components/ui/data-table";
 import { SalesTableColumns } from "./_components/table-columns";
 import { getSales } from "../_data-acess/sales/get-sales";
 import { ComboboxOption } from "../_components/ui/combobox";
+import CreateSaleButton from "./_components/create-sale-button";
 
 const Sales = async () => {
   const sales = await getSales();

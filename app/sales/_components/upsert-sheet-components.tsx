@@ -35,7 +35,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
 import { UpsertSaleTableDropdownMenu } from "./upsert-table-dropdown-menu";
-import { createSaleAction } from "@/app/_actions/sale/create-sale";
+import { upsertSaleAction } from "@/app/_actions/sale/upsert-sale";
 import { useAction } from "next-safe-action/hooks";
 import { ProductDto } from "@/app/_data-acess/product/get-produts";
 
@@ -50,6 +50,7 @@ const formSchema = z.object({
 type FormSchema = z.infer<typeof formSchema>;
 
 interface UpsertSheetComponentProps {
+  saleId?: string;
   products: ProductDto[];
   productOptions: ComboboxOption[];
   onSubmitSuccess?: () => void;
@@ -65,6 +66,7 @@ interface SelectedProduct {
 }
 
 const UpsertSheetComponent = ({
+  saleId,
   productOptions,
   products,
   defaultSelectedProducts = [],
@@ -74,7 +76,7 @@ const UpsertSheetComponent = ({
     defaultSelectedProducts,
   );
 
-  const { execute: executeCreateSale } = useAction(createSaleAction, {
+  const { execute: executeupsertSale } = useAction(upsertSaleAction, {
     onError: (error) => {
       console.error(error);
       toast.error("Erro ao criar venda");
@@ -160,7 +162,8 @@ const UpsertSheetComponent = ({
   };
 
   const onSubmitSale = async () => {
-    executeCreateSale({
+    executeupsertSale({
+      id: saleId,
       products: selectedProducts.map((product) => ({
         id: product.id,
         quantity: product.quantity,

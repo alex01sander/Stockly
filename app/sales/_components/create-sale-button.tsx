@@ -3,12 +3,12 @@
 import { Button } from "@/app/_components/ui/button";
 import { Sheet, SheetTrigger } from "@/app/_components/ui/sheet";
 import UpsertSheetComponent from "./upsert-sheet-components";
-import { Product } from "@prisma/client";
+import { ProductDto } from "@/app/_data-acess/product/get-produts";
 import { ComboboxOption } from "@/app/_components/ui/combobox";
 import { useState } from "react";
 
 interface CreateSaleButtonProps {
-  products: Product[];
+  products: ProductDto[];
   productOptions: ComboboxOption[];
 }
 

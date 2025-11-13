@@ -1,14 +1,42 @@
 "use server";
 import { db } from "@/app/_lib/prisma";
-import { CreateSaleSchema } from "./schema";
+import { upsertSaleSchema } from "./schema";
 import { revalidatePath } from "next/cache";
 import { actionClient } from "@/app/_lib/safe-action";
 import { returnValidationErrors } from "next-safe-action";
 
-export const createSaleAction = actionClient
-  .schema(CreateSaleSchema)
-  .action(async ({ parsedInput: { products } }) => {
+export const upsertSaleAction = actionClient
+  .schema(upsertSaleSchema)
+  .action(async ({ parsedInput: { products, id } }) => {
+    const isUpdate = Boolean(id);
+
     await db.$transaction(async (trx) => {
+      if (isUpdate) {
+        const existingSale = await trx.sale.findUnique({
+          where: { id },
+          include: {
+            saleProducts: true,
+          },
+        });
+
+        if (existingSale) {
+          for (const saleProduct of existingSale.saleProducts) {
+            await trx.product.update({
+              where: { id: saleProduct.productId },
+              data: {
+                stock: {
+                  increment: saleProduct.quantity,
+                },
+              },
+            });
+          }
+
+          await trx.sale.delete({
+            where: { id },
+          });
+        }
+      }
+
       const sale = await trx.sale.create({
         data: {
           date: new Date(),
@@ -17,21 +45,18 @@ export const createSaleAction = actionClient
 
       for (const product of products) {
         const productFromDb = await db.product.findUnique({
-          where: {
-            id: product.id,
-          },
+          where: { id: product.id },
         });
 
         if (!productFromDb) {
-          returnValidationErrors(CreateSaleSchema, {
+          returnValidationErrors(upsertSaleSchema, {
             _errors: ["Produto não encontrado"],
           });
         }
 
         const hasInsufficientStock = productFromDb.stock < product.quantity;
-
         if (hasInsufficientStock) {
-          returnValidationErrors(CreateSaleSchema, {
+          returnValidationErrors(upsertSaleSchema, {
             _errors: ["Estoque insuficiente"],
           });
         }
@@ -44,15 +69,17 @@ export const createSaleAction = actionClient
             unitPrice: productFromDb.price,
           },
         });
+
         await trx.product.update({
-          where: {
-            id: product.id,
-          },
+          where: { id: product.id },
           data: {
-            stock: productFromDb.stock - product.quantity,
+            stock: {
+              decrement: product.quantity,
+            },
           },
         });
       }
     });
+
     revalidatePath("/products");
   });
