@@ -7,13 +7,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { CircleIcon } from "lucide-react";
 import { ProducTabletDropdownMenu } from "./table-dropdown-menu";
 
-const getStatusLabel = (status: string) => {
-  if (status === "IN_STOCK") {
-    return "Em estoque";
-  }
-  return "Fora de estoque";
-};
-
 export const productsTableColumns: ColumnDef<Product>[] = [
   {
     accessorKey: "name",
@@ -34,11 +27,10 @@ export const productsTableColumns: ColumnDef<Product>[] = [
     header: "Estoque",
   },
   {
-    accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
       const product = row.original;
-      const label = getStatusLabel(product.status);
+      const label = product.stock > 0 ? "Em estoque" : "Fora de estoque";
       return (
         <Badge
           variant={label === "Em estoque" ? "default" : "outline"}
