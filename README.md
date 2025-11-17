@@ -193,6 +193,47 @@ O projeto mantém uma cobertura mínima de 70% em:
   - Fluxo de produtos (criar, listar, atualizar, deletar)
   - Fluxo de vendas (criar vendas, atualizar estoque, validações)
 
+## 📚 Documentação da API (Swagger)
+
+O projeto possui documentação completa da API usando Swagger/OpenAPI.
+
+### Acessar a Documentação
+
+Após iniciar o servidor de desenvolvimento, acesse:
+
+```
+http://localhost:3000/api-docs
+```
+
+A documentação interativa permite:
+- Visualizar todas as Server Actions e funções de acesso a dados
+- Ver exemplos de requisições e respostas
+- Testar endpoints diretamente na interface
+- Entender os schemas e modelos de dados
+
+### Endpoints Documentados
+
+#### Produtos
+- `POST /api/actions/product/upsert` - Criar ou atualizar produto
+- `DELETE /api/actions/product/delete` - Deletar produto
+- `GET /api/data-access/products` - Listar produtos
+
+#### Vendas
+- `POST /api/actions/sale/upsert` - Criar ou atualizar venda
+- `DELETE /api/actions/sale/delete` - Deletar venda
+- `GET /api/data-access/sales` - Listar vendas
+
+#### Dashboard
+- `GET /api/data-access/dashboard/stats` - Estatísticas do dashboard
+
+### Especificação OpenAPI
+
+A especificação OpenAPI completa está disponível em formato JSON:
+
+```
+http://localhost:3000/api/docs
+```
+
 ## 🔧 Configuração Adicional
 
 ### Prisma Studio

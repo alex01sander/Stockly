@@ -5,6 +5,77 @@ import { revalidatePath } from "next/cache";
 import { actionClient } from "@/app/_lib/safe-action";
 import { returnValidationErrors } from "next-safe-action";
 
+/**
+ * @swagger
+ * /api/actions/sale/upsert:
+ *   post:
+ *     summary: Cria ou atualiza uma venda
+ *     description: |
+ *       Cria uma nova venda ou atualiza uma venda existente.
+ *       Ao criar uma venda, o estoque dos produtos é automaticamente decrementado.
+ *       Ao atualizar, o estoque da venda anterior é restaurado antes de criar a nova.
+ *       
+ *       **Validações:**
+ *       - Todos os produtos devem existir
+ *       - O estoque deve ser suficiente para a quantidade solicitada
+ *     tags: [Sales]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpsertSaleRequest'
+ *           examples:
+ *             create:
+ *               summary: Criar nova venda
+ *               value:
+ *                 products:
+ *                   - id: "123e4567-e89b-12d3-a456-426614174000"
+ *                     quantity: 2
+ *                   - id: "223e4567-e89b-12d3-a456-426614174000"
+ *                     quantity: 1
+ *             update:
+ *               summary: Atualizar venda existente
+ *               value:
+ *                 id: "323e4567-e89b-12d3-a456-426614174000"
+ *                 products:
+ *                   - id: "123e4567-e89b-12d3-a456-426614174000"
+ *                     quantity: 3
+ *     responses:
+ *       200:
+ *         description: Venda criada ou atualizada com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Dados inválidos ou estoque insuficiente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *             examples:
+ *               insufficientStock:
+ *                 summary: Estoque insuficiente
+ *                 value:
+ *                   message: "Estoque insuficiente"
+ *                   errors: ["Estoque insuficiente"]
+ *               productNotFound:
+ *                 summary: Produto não encontrado
+ *                 value:
+ *                   message: "Produto não encontrado"
+ *                   errors: ["Produto não encontrado"]
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 export const upsertSaleAction = actionClient
   .schema(upsertSaleSchema)
   .action(async ({ parsedInput: { products, id } }) => {

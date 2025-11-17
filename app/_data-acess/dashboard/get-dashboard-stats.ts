@@ -9,6 +9,42 @@ export interface DashboardStats {
   totalProducts: number;
 }
 
+/**
+ * @swagger
+ * /api/data-access/dashboard/stats:
+ *   get:
+ *     summary: Obtém estatísticas do dashboard
+ *     description: |
+ *       Retorna estatísticas agregadas do sistema para o dashboard:
+ *       - Receita total (todas as vendas)
+ *       - Receita do dia (vendas realizadas hoje)
+ *       - Total de vendas (quantidade de vendas)
+ *       - Total em estoque (soma de todos os estoques)
+ *       - Total de produtos (quantidade de produtos cadastrados)
+ *     tags: [Dashboard]
+ *     responses:
+ *       200:
+ *         description: Estatísticas retornadas com sucesso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/DashboardStats'
+ *             examples:
+ *               success:
+ *                 summary: Estatísticas do dashboard
+ *                 value:
+ *                   totalRevenue: 15000.50
+ *                   todayRevenue: 500.00
+ *                   totalSales: 150
+ *                   totalStock: 500
+ *                   totalProducts: 25
+ *       500:
+ *         description: Erro interno do servidor
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
 export const getDashboardStats = async (): Promise<DashboardStats> => {
   // Buscar todas as vendas com seus produtos
   const sales = await db.sale.findMany({
