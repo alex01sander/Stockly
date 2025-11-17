@@ -157,4 +157,5 @@ export const upsertSaleAction = actionClient
 
     revalidatePath("/products");
     revalidatePath("/sales");
+    revalidatePath("/");
   });

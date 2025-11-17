@@ -30,7 +30,7 @@ import {
 } from "@/app/_components/ui/table";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckIcon, PlusIcon } from "lucide-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -75,6 +75,11 @@ const UpsertSheetComponent = ({
   const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>(
     defaultSelectedProducts,
   );
+
+  // Sincronizar o estado quando defaultSelectedProducts mudar (quando o sheet for aberto)
+  useEffect(() => {
+    setSelectedProducts(defaultSelectedProducts);
+  }, [defaultSelectedProducts]);
 
   const isEditing = Boolean(saleId);
 
